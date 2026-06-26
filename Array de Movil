@@ -1,0 +1,57 @@
+Movil[] moviles;
+int cantidad = 20;
+
+void setup() {
+  size(800, 600);
+
+  moviles = new Movil[cantidad];
+
+  for (int i = 0; i < cantidad; i++) {
+    moviles[i] = new Movil(random(width), random(height));
+  }
+}
+
+void draw() {
+  background(220);
+
+  for (int i = 0; i < cantidad - 1; i++) {
+    moviles[i].seguir(moviles[i + 1].pos);
+  }
+
+  moviles[cantidad - 1].seguir(new PVector(mouseX, mouseY));
+
+  for (int i = 0; i < cantidad; i++) {
+    moviles[i].update();
+    moviles[i].display();
+  }
+}
+
+class Movil {
+
+  PVector pos;
+  PVector vel;
+
+  Movil(float x, float y) {
+    pos = new PVector(x, y);
+    vel = new PVector();
+  }
+
+  void seguir(PVector objetivo) {
+
+    PVector direccion = PVector.sub(objetivo, pos);
+
+    direccion.setMag(0.2);
+
+    vel.add(direccion);
+    vel.limit(4);
+  }
+
+  void update() {
+    pos.add(vel);
+    vel.mult(0.95);
+  }
+
+  void display() {
+    ellipse(pos.x, pos.y, 20, 20);
+  }
+}
