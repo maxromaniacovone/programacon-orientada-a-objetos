@@ -1,0 +1,186 @@
+1)
+Movil m;
+
+void setup() {
+  size(800, 600);
+  m = new Movil(width/2, height/2);
+}
+
+void draw() {
+  background(220);
+
+  PVector fuerza = new PVector(0.1, 0);
+
+  if (mousePressed) {
+    m.aplicarFuerza(fuerza);
+  }
+
+  m.actualizar();
+  m.mostrar();
+}
+
+class Movil {
+  PVector pos, vel, ace;
+  float angulo = 0;
+  float velAngular = 0;
+
+  Movil(float x, float y) {
+    pos = new PVector(x, y);
+    vel = new PVector();
+    ace = new PVector();
+  }
+
+  void aplicarFuerza(PVector f) {
+    ace.add(f);
+    velAngular += 0.05;
+  }
+
+  void actualizar() {
+    vel.add(ace);
+    pos.add(vel);
+
+    angulo += velAngular;
+
+    ace.mult(0);
+    velAngular *= 0.98;
+  }
+
+  void mostrar() {
+    pushMatrix();
+    translate(pos.x, pos.y);
+    rotate(angulo);
+
+    rectMode(CENTER);
+    fill(100, 150, 255);
+    rect(0, 0, 60, 30);
+
+    popMatrix();
+  }
+}
+
+
+2)
+Movil A;
+Movil B;
+
+void setup() {
+  size(800, 600);
+
+  A = new Movil(100, 300);
+  B = new Movil(700, 300);
+
+  A.vel = new PVector(2, 0);
+}
+
+void draw() {
+  background(220);
+
+  A.actualizar();
+
+  PVector direccion = PVector.sub(A.pos, B.pos);
+  direccion.normalize();
+  direccion.mult(0.1);
+
+  B.aplicarFuerza(direccion);
+  B.actualizar();
+
+  fill(255, 0, 0);
+  A.mostrar();
+
+  fill(0, 0, 255);
+  B.mostrar();
+}
+
+class Movil {
+  PVector pos, vel, ace;
+
+  Movil(float x, float y) {
+    pos = new PVector(x, y);
+    vel = new PVector();
+    ace = new PVector();
+  }
+
+  void aplicarFuerza(PVector f) {
+    ace.add(f);
+  }
+
+  void actualizar() {
+    vel.add(ace);
+    pos.add(vel);
+    ace.mult(0);
+  }
+
+  void mostrar() {
+    circle(pos.x, pos.y, 30);
+  }
+}
+
+3)
+Movil m1;
+Movil m2;
+
+void setup() {
+  size(800, 600);
+
+  m1 = new Movil(300, 100);
+  m2 = new Movil(500, 50);
+}
+
+void draw() {
+  background(220);
+
+  PVector gravedad = new PVector(0, 0.2);
+
+  m1.aplicarFuerza(gravedad);
+  m2.aplicarFuerza(gravedad);
+
+  m1.actualizar();
+  m2.actualizar();
+
+  float distancia = dist(m1.pos.x, m1.pos.y,
+                         m2.pos.x, m2.pos.y);
+
+  if (distancia < m1.tam/2 + m2.tam/2) {
+
+    m1.vel.mult(-1);
+    m2.vel.mult(-1);
+
+    m1.tam -= 5;
+    m2.tam -= 5;
+  }
+
+  m1.mostrar();
+  m2.mostrar();
+}
+
+class Movil {
+  PVector pos, vel, ace;
+  float tam = 50;
+
+  Movil(float x, float y) {
+    pos = new PVector(x, y);
+    vel = new PVector(random(-2, 2), 0);
+    ace = new PVector();
+  }
+
+  void aplicarFuerza(PVector f) {
+    ace.add(f);
+  }
+
+  void actualizar() {
+    vel.add(ace);
+    pos.add(vel);
+    ace.mult(0);
+
+    if (pos.y > height - tam/2) {
+      pos.y = height - tam/2;
+      vel.y *= -0.8;
+    }
+  }
+
+  void mostrar() {
+    fill(100, 200, 255);
+    circle(pos.x, pos.y, tam);
+  }
+}
+
